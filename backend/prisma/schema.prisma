@@ -6,3 +6,88 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  ADMIN
+  STAFF
+  MEMBER
+}
+
+enum Tier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum TransactionType {
+  EARN
+  REDEEM
+  ADJUST
+  EXPIRE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(MEMBER)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  member Member?
+}
+
+model Member {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  firstName     String
+  lastName      String
+  phone         String?
+  tier          Tier     @default(BRONZE)
+  totalPoints   Int      @default(0)
+  currentPoints Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+  redemptions  Redemption[]
+}
+
+model Reward {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  pointsCost  Int
+  stock       Int      @default(0)
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  redemptions Redemption[]
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  memberId    String
+  type        TransactionType
+  points      Int
+  description String?
+  createdAt   DateTime        @default(now())
+
+  member Member @relation(fields: [memberId], references: [id])
+}
+
+model Redemption {
+  id         String   @id @default(uuid())
+  memberId   String
+  rewardId   String
+  pointsUsed Int
+  createdAt  DateTime @default(now())
+
+  member Member @relation(fields: [memberId], references: [id])
+  reward Reward @relation(fields: [rewardId], references: [id])
+}
