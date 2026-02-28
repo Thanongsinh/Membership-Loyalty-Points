@@ -26,8 +26,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "scheme": "loyalty-points",
     "plugins": [
-      "expo-router"
+      ["expo-router", { "root": "./src/app" }],
+      "expo-secure-store"
     ]
   }
 }
