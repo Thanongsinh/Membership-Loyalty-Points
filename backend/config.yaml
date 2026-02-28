@@ -1,0 +1,14 @@
+server:
+  port: 3001
+  host: "0.0.0.0"
+
+database:
+  url: "postgresql://postgres:password@localhost:5432/membership_loyalty_points"
+
+cors:
+  origin: "http://localhost:3000"
+  credentials: true
+
+logging:
+  level: "info"
+  format: "json"
