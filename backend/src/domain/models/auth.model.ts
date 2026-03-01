@@ -3,8 +3,10 @@ import { IUser } from "../entities/user.entity";
 export interface RegisterDto {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
   phone?: string;
 }
 

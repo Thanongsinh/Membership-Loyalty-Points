@@ -4,6 +4,7 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from ".
 import { AppError } from "../../core/utilities/errors";
 import { RegisterDto, LoginDto, AuthResponse } from "../../domain/models/auth.model";
 import { ITokenPayload } from "../../domain/entities/user.entity";
+import { Role } from "@prisma/client";
 
 export const authService = {
   async register(dto: RegisterDto): Promise<AuthResponse> {
@@ -18,10 +19,11 @@ export const authService = {
       data: {
         email: dto.email,
         passwordHash,
+        role: (dto.role as Role) || "MEMBER",
         member: {
           create: {
-            firstName: dto.firstName,
-            lastName: dto.lastName,
+            firstName: dto.firstName || (dto.name ? dto.name.split(" ")[0] : ""),
+            lastName: dto.lastName || (dto.name ? dto.name.split(" ").slice(1).join(" ") : ""),
             phone: dto.phone,
           },
         },

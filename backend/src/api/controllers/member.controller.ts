@@ -10,7 +10,7 @@ export const memberController = {
     res.json(result);
   }),
 
-  getById: asyncHandler(async (req: Request, res: Response) => {
+  getById: asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
     const member = await memberService.getById(req.params.id);
     res.json(member);
   }),

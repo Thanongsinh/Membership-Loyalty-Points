@@ -12,7 +12,7 @@ export const rewardController = {
     res.json(result);
   }),
 
-  getById: asyncHandler(async (req: Request, res: Response) => {
+  getById: asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
     const reward = await rewardService.getById(req.params.id);
     res.json(reward);
   }),
@@ -22,17 +22,17 @@ export const rewardController = {
     res.status(201).json(reward);
   }),
 
-  update: asyncHandler(async (req: Request, res: Response) => {
+  update: asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
     const reward = await rewardService.update(req.params.id, req.body);
     res.json(reward);
   }),
 
-  remove: asyncHandler(async (req: Request, res: Response) => {
+  remove: asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
     await rewardService.remove(req.params.id);
     res.json({ message: "Reward deleted" });
   }),
 
-  redeem: asyncHandler(async (req: Request, res: Response) => {
+  redeem: asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
     const member = await memberRepository.findByUserId(req.user!.userId);
     if (!member) throw new AppError(404, "Member not found");
     const redemption = await rewardService.redeem(member.id, req.params.id);

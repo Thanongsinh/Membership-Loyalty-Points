@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { ITokenPayload } from "../../domain/entities/user.entity";
+import { config } from "./config";
 
-const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "default-refresh-secret";
+const JWT_SECRET = config.jwt.access_token || "default-secret";
+const JWT_REFRESH_SECRET = config.jwt.refresh_token || "default-refresh-secret";
 
 export function generateAccessToken(payload: ITokenPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
