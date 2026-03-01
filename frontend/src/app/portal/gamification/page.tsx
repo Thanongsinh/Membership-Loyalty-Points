@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { checkIn, getBadges, CheckInResult } from "@/services/gamification.service";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function GamificationPage() {
   const qc = useQueryClient();
@@ -17,11 +18,14 @@ export default function GamificationPage() {
     onSuccess: (data) => {
       setResult(data);
       setError("");
+      toast.success(`Check-in successful! +${data.points} points`);
       qc.invalidateQueries({ queryKey: ["badges"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
     onError: (err: any) => {
-      setError(err.response?.data?.message || "Check-in failed");
+      const errorMsg = err.response?.data?.message || "Check-in failed";
+      setError(errorMsg);
+      toast.error(errorMsg);
       setResult(null);
     },
   });

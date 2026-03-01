@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { toast } from "sonner";
 
 export default function PromotionsPage() {
   const { t } = useI18n();
@@ -29,12 +30,21 @@ export default function PromotionsPage() {
       startDate: form.startDate,
       endDate: form.endDate,
     } as any),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["promotions"] }); setOpen(false); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["promotions"] });
+      setOpen(false);
+      toast.success("Promotion created successfully!");
+    },
+    onError: (e: any) => toast.error(e.response?.data?.message || "Failed to create promotion"),
   });
 
   const deleteMut = useMutation({
     mutationFn: deletePromotion,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["promotions"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["promotions"] });
+      toast.success("Promotion deleted!");
+    },
+    onError: (e: any) => toast.error(e.response?.data?.message || "Failed to delete promotion"),
   });
 
   const typeLabel: Record<string, string> = { PERCENTAGE: "%", FIXED: "Fixed", BUY_X_GET_Y: "Buy X Get Y", BONUS_POINTS: "Bonus Pts" };

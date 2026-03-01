@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getMyTransactions } from "@/services/transaction.service";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { SkeletonTable } from "@/components/layout/skeleton-cards";
+import { PointsChart } from "@/components/member/points-chart";
 
 export default function HistoryPage() {
   const { data, isLoading } = useQuery({
@@ -14,7 +16,8 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Transaction History</h2>
-      {isLoading ? <p>Loading...</p> : (
+      <PointsChart />
+      {isLoading ? <SkeletonTable /> : (
         <Table>
           <TableHeader>
             <TableRow>

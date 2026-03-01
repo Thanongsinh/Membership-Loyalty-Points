@@ -12,8 +12,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Receipt, Star, MessageSquare } from "lucide-react";
+import { OrderTimeline } from "@/components/member/order-timeline";
 import { useI18n } from "@/lib/i18n";
 import { useAuthStore } from "@/stores/auth.store";
+import { SkeletonTable } from "@/components/layout/skeleton-cards";
 
 const statusVariant: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
   PENDING: "outline", CONFIRMED: "secondary", PREPARING: "secondary", READY: "default", COMPLETED: "default", CANCELLED: "destructive",
@@ -72,7 +74,7 @@ export default function MyOrdersPage() {
         </DialogContent>
       </Dialog>
 
-      {isLoading ? <p>{t("loading")}</p> : !data || data.data.length === 0 ? (
+      {isLoading ? <SkeletonTable rows={8} /> : !data || data.data.length === 0 ? (
         <p className="text-muted-foreground">{t("order.noOrders")}</p>
       ) : (
         <div className="space-y-4">
@@ -80,7 +82,7 @@ export default function MyOrdersPage() {
             <Card key={o.id}>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-mono">{o.orderNumber}</CardTitle>
+                  <CardTitle className="text-base font-mono"><Link href={`/portal/orders/${o.id}`} className="hover:underline">{o.orderNumber}</Link></CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge variant={statusVariant[o.status]}>{o.status}</Badge>
                     <Link href={`/portal/orders/${o.id}/receipt`}>
@@ -89,6 +91,9 @@ export default function MyOrdersPage() {
                   </div>
                 </div>
               </CardHeader>
+              {o.status !== "COMPLETED" && o.status !== "CANCELLED" && (
+                <div className="px-6"><OrderTimeline status={o.status} /></div>
+              )}
               <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{o.store?.name}</span>

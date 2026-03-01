@@ -16,17 +16,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ShoppingCart, Check, Heart, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { Product } from "@/domain/entities/types";
+import { toast } from "sonner";
+import { ProductFilters } from "@/components/rewards/product-filters";
+import { CompareButton } from "@/components/rewards/compare-button";
 
 export default function StorefrontPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
   const qc = useQueryClient();
   const [catFilter, setCatFilter] = useState("");
+  const [advFilters, setAdvFilters] = useState<{ minPrice?: number; maxPrice?: number; minRating?: number; sortBy?: string }>({});
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [reviewProductId, setReviewProductId] = useState<string | null>(null);
 
   const { data: store } = useQuery({ queryKey: ["store", id], queryFn: () => getStoreById(id) });
-  const { data: products } = useQuery({ queryKey: ["products", id, catFilter], queryFn: () => getProducts(1, 100, { storeId: id, categoryId: catFilter || undefined }) });
+  const { data: products } = useQuery({ queryKey: ["products", id, catFilter, advFilters], queryFn: () => getProducts(1, 100, { storeId: id, categoryId: catFilter || undefined, ...advFilters }) });
   const { data: categories } = useQuery({ queryKey: ["categories"], queryFn: getCategories });
   const { data: reviews } = useQuery({ queryKey: ["reviews", reviewProductId], queryFn: () => getProductReviews(reviewProductId!), enabled: !!reviewProductId });
 
@@ -36,7 +40,9 @@ export default function StorefrontPage() {
       qc.invalidateQueries({ queryKey: ["cart"] });
       setAddedIds((prev) => new Set(prev).add(productId));
       setTimeout(() => setAddedIds((prev) => { const n = new Set(prev); n.delete(productId); return n; }), 2000);
+      toast.success("Added to cart!");
     },
+    onError: (e: any) => toast.error(e.response?.data?.message || "Failed to add to cart"),
   });
 
   const wishMut = useMutation({
@@ -64,6 +70,7 @@ export default function StorefrontPage() {
         {categories?.map((c) => (
           <Button key={c.id} variant={catFilter === c.id ? "default" : "outline"} size="sm" onClick={() => setCatFilter(c.id)}>{c.name}</Button>
         ))}
+        <ProductFilters onApply={setAdvFilters} />
       </div>
 
       <Dialog open={!!reviewProductId} onOpenChange={() => setReviewProductId(null)}>
@@ -86,9 +93,12 @@ export default function StorefrontPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">{p.name}</CardTitle>
-                <Button variant="ghost" size="icon" onClick={() => wishMut.mutate(p.id)}>
-                  <Heart className="h-4 w-4 hover:fill-red-500 hover:text-red-500" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <CompareButton product={p} />
+                  <Button variant="ghost" size="icon" onClick={() => wishMut.mutate(p.id)}>
+                    <Heart className="h-4 w-4 hover:fill-red-500 hover:text-red-500" />
+                  </Button>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 {p.category && <Badge variant="outline">{p.category.name}</Badge>}

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { SkeletonCardGrid } from "@/components/layout/skeleton-cards";
 
 export default function WishlistPage() {
   const { t } = useI18n();
@@ -28,7 +29,7 @@ export default function WishlistPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{t("wishlist.title")}</h2>
-      {isLoading ? <p>{t("loading")}</p> : !items || items.length === 0 ? (
+      {isLoading ? <SkeletonCardGrid /> : !items || items.length === 0 ? (
         <p className="text-muted-foreground">{t("wishlist.empty")}</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

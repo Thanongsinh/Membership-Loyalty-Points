@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const queryClient = useQueryClient();
@@ -15,15 +16,14 @@ export default function ProfilePage() {
     queryFn: getMyProfile,
   });
   const [form, setForm] = useState<{ firstName: string; lastName: string; phone: string } | null>(null);
-  const [message, setMessage] = useState("");
 
   const updateMut = useMutation({
     mutationFn: () => updateMyProfile(form!),
     onSuccess: () => {
-      setMessage("Profile updated!");
+      toast.success("Profile updated!");
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (e: any) => setMessage(e.response?.data?.message || "Update failed"),
+    onError: (e: any) => toast.error(e.response?.data?.message || "Update failed"),
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -34,7 +34,6 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Profile</h2>
-      {message && <p className="rounded bg-muted p-3 text-sm">{message}</p>}
       <Card>
         <CardHeader><CardTitle>Edit Profile</CardTitle></CardHeader>
         <CardContent>

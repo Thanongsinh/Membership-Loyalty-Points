@@ -3,7 +3,7 @@ import { AppError } from "../../core/utilities/errors";
 import { PaginationParams, paginatedResponse } from "../../core/utilities/pagination";
 
 export const productService = {
-  async getAll(params: PaginationParams, filters?: { storeId?: string; categoryId?: string; search?: string; activeOnly?: boolean }) {
+  async getAll(params: PaginationParams, filters?: { storeId?: string; categoryId?: string; search?: string; activeOnly?: boolean; minPrice?: number; maxPrice?: number; minRating?: number; sortBy?: string }) {
     const [data, total] = await Promise.all([
       productRepository.findAll(params.skip, params.limit, filters),
       productRepository.count(filters),

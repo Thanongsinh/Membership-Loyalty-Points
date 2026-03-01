@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getMyReferralCode, getMyReferrals, applyReferral, Referral } from "@/services/referral.service";
 import QRCode from "qrcode";
+import { toast } from "sonner";
 
 export default function ReferralsPage() {
   const qc = useQueryClient();
@@ -31,8 +32,13 @@ export default function ReferralsPage() {
       qc.invalidateQueries({ queryKey: ["profile"] });
       setReferralInput("");
       setError("");
+      toast.success("Referral code applied successfully!");
     },
-    onError: (err: any) => setError(err.response?.data?.message || "Failed to apply referral"),
+    onError: (err: any) => {
+      const errorMsg = err.response?.data?.message || "Failed to apply referral";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    },
   });
 
   const copyCode = () => {

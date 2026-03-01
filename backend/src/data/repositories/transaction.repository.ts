@@ -46,4 +46,21 @@ export const transactionRepository = {
   countByMemberId(memberId: string) {
     return prisma.transaction.count({ where: { memberId } });
   },
+
+  async getHistory(memberId: string, days: number) {
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+    const transactions = await prisma.transaction.findMany({
+      where: { memberId, createdAt: { gte: since } },
+      orderBy: { createdAt: "asc" },
+    });
+    const grouped: Record<string, { earned: number; spent: number }> = {};
+    for (const t of transactions) {
+      const date = t.createdAt.toISOString().split("T")[0];
+      if (!grouped[date]) grouped[date] = { earned: 0, spent: 0 };
+      if (t.points > 0) grouped[date].earned += t.points;
+      else grouped[date].spent += Math.abs(t.points);
+    }
+    return Object.entries(grouped).map(([date, v]) => ({ date, ...v }));
+  },
 };

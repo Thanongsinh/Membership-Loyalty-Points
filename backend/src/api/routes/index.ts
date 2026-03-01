@@ -24,6 +24,7 @@ import { promotionRouter } from "./promotion.routes";
 import { staffRouter } from "./staff.routes";
 import { receiptController } from "../controllers/receipt.controller";
 import { authenticate } from "../middleware/auth.middleware";
+import leaderboardRoutes from "./leaderboard.routes";
 
 export const router = Router();
 
@@ -55,3 +56,4 @@ router.use("/wishlist", authenticate, wishlistRouter);
 router.use("/promotions", authenticate, promotionRouter);
 router.use("/staff", authenticate, staffRouter);
 router.get("/orders/:id/receipt", authenticate, receiptController.getReceipt);
+router.use("/leaderboard", authenticate, leaderboardRoutes);

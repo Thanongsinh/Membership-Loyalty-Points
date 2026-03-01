@@ -3,10 +3,14 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Gift, History, UserCircle, LogOut, Users, Trophy, Store, ShoppingCart, ShoppingBag, Heart } from "lucide-react";
+import { Home, Gift, History, UserCircle, LogOut, Users, Trophy, Store, ShoppingCart, ShoppingBag, Heart, Menu, Bell } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { NotificationBell } from "./notification-bell";
 import { useI18n } from "@/lib/i18n";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { GlobalSearch } from "./global-search";
+import { useState } from "react";
 
 const navItems = [
   { href: "/portal", labelKey: "nav.home", icon: Home },
@@ -17,6 +21,8 @@ const navItems = [
   { href: "/portal/cart", labelKey: "nav.cart", icon: ShoppingCart },
   { href: "/portal/orders", labelKey: "nav.orders", icon: ShoppingBag },
   { href: "/portal/wishlist", labelKey: "nav.wishlist", icon: Heart },
+  { href: "/portal/notifications", labelKey: "nav.notifications", icon: Bell },
+  { href: "/portal/leaderboard", labelKey: "nav.leaderboard", icon: Trophy },
   { href: "/portal/gamification", labelKey: "nav.checkin", icon: Trophy },
   { href: "/portal/profile", labelKey: "nav.profile", icon: UserCircle },
 ];
@@ -26,18 +32,17 @@ export function PortalNav() {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
   const { t } = useI18n();
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="flex h-screen w-64 flex-col border-r bg-card">
-      <div className="flex h-16 items-center justify-between border-b px-6">
-        <h1 className="text-lg font-bold">{t("app.name")}</h1>
-        <NotificationBell />
-      </div>
+  const navContent = (
+    <>
       <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
+            onClick={() => setOpen(false)}
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
               pathname === item.href
@@ -62,6 +67,43 @@ export function PortalNav() {
           {t("logout")}
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex h-screen w-64 flex-col border-r bg-card">
+        <div className="flex h-16 items-center justify-between border-b px-6">
+          <h1 className="text-lg font-bold">{t("app.name")}</h1>
+          <NotificationBell />
+        </div>
+        <div className="px-4 py-2">
+          <GlobalSearch />
+        </div>
+        {navContent}
+      </aside>
+
+      {/* Mobile Header */}
+      <div className="flex md:hidden items-center justify-between border-b px-4 h-14 bg-card">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <button className="p-2">
+              <Menu className="h-6 w-6" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <div className="flex h-full flex-col">
+              <div className="flex h-16 items-center border-b px-6">
+                <h1 className="text-lg font-bold">{t("app.name")}</h1>
+              </div>
+              {navContent}
+            </div>
+          </SheetContent>
+        </Sheet>
+        <h1 className="text-lg font-bold">{t("app.name")}</h1>
+        <NotificationBell />
+      </div>
+    </>
   );
 }

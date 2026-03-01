@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
+import Link from "next/link";
 import { getNotifications, getUnreadCount, markAsRead, markAllAsRead, Notification } from "@/services/notification.service";
 
 export function NotificationBell() {
@@ -74,6 +75,9 @@ export function NotificationBell() {
                 </div>
               ))}
               {notifications.length === 0 && <p className="text-center text-muted-foreground text-sm py-4">No notifications</p>}
+            </div>
+            <div className="border-t mt-2 pt-2 text-center">
+              <Link href="/portal/notifications" onClick={() => setOpen(false)} className="text-sm text-primary hover:underline">View All</Link>
             </div>
           </CardContent>
         </Card>

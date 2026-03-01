@@ -4,11 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard, Users, Gift, Coins, History, LogOut, Flag, Settings, ScrollText, Megaphone, Store, Tags, ShoppingBag, Ticket,
+  LayoutDashboard, Users, Gift, Coins, History, LogOut, Flag, Settings, ScrollText, Megaphone, Store, Tags, ShoppingBag, Ticket, Menu,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 const navItems = [
   { href: "/dashboard", labelKey: "nav.overview", icon: LayoutDashboard },
@@ -31,17 +34,17 @@ export function Sidebar() {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
   const { t } = useI18n();
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="flex h-screen w-64 flex-col border-r bg-card">
-      <div className="flex h-16 items-center border-b px-6">
-        <h1 className="text-lg font-bold">{t("app.admin")}</h1>
-      </div>
+  const navContent = (
+    <>
       <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
+            onClick={() => setOpen(false)}
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
               pathname === item.href
@@ -66,6 +69,38 @@ export function Sidebar() {
           {t("logout")}
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex h-screen w-64 flex-col border-r bg-card">
+        <div className="flex h-16 items-center border-b px-6">
+          <h1 className="text-lg font-bold">{t("app.admin")}</h1>
+        </div>
+        {navContent}
+      </aside>
+
+      {/* Mobile Header */}
+      <div className="flex md:hidden items-center justify-between border-b px-4 h-14 bg-card">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <button className="p-2">
+              <Menu className="h-6 w-6" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <div className="flex h-full flex-col">
+              <div className="flex h-16 items-center border-b px-6">
+                <h1 className="text-lg font-bold">{t("app.admin")}</h1>
+              </div>
+              {navContent}
+            </div>
+          </SheetContent>
+        </Sheet>
+        <h1 className="text-lg font-bold">{t("app.admin")}</h1>
+      </div>
+    </>
   );
 }

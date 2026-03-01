@@ -11,6 +11,10 @@ export const productController = {
       categoryId: req.query.categoryId as string | undefined,
       search: req.query.search as string | undefined,
       activeOnly: req.user!.role === "MEMBER",
+      minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
+      maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
+      minRating: req.query.minRating ? parseFloat(req.query.minRating as string) : undefined,
+      sortBy: req.query.sortBy as string | undefined,
     };
     res.json(await productService.getAll(params, filters));
   }),

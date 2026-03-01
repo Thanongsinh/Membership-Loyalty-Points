@@ -13,6 +13,7 @@ import { Minus, Plus, Trash2, Tag } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function CartPage() {
   const { t } = useI18n();
@@ -45,7 +46,9 @@ export default function CartPage() {
     onSuccess: (order) => {
       qc.invalidateQueries({ queryKey: ["cart"] });
       setOrderResult(order.orderNumber);
+      toast.success("Order placed successfully!");
     },
+    onError: (e: any) => toast.error(e.response?.data?.message || "Checkout failed"),
   });
 
   const totalPoints = cart?.reduce((sum, item) => sum + (item.product?.pointsPrice ?? 0) * item.quantity, 0) ?? 0;
@@ -56,8 +59,11 @@ export default function CartPage() {
     try {
       const result = await applyPromoCode(promoCode, totalPoints);
       setPromoResult({ discount: result.discount, bonusPoints: result.bonusPoints, name: result.promotion.name });
+      toast.success("Promo code applied!");
     } catch (e: any) {
-      setPromoError(e.response?.data?.message || "Invalid code");
+      const errorMsg = e.response?.data?.message || "Invalid code";
+      setPromoError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 

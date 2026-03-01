@@ -3,12 +3,46 @@ import { authorize } from "../middleware/auth.middleware";
 import { upload } from "../../core/utilities/upload";
 import { asyncHandler } from "../../core/utilities/errors";
 import { Request, Response } from "express";
+import { prisma } from "../../data/prisma";
 
 const router = Router();
 
 router.post(
   "/image",
   authorize("ADMIN"),
+  upload.single("image"),
+  asyncHandler(async (req: Request, res: Response) => {
+    if (!req.file) {
+      res.status(400).json({ message: "No file uploaded" });
+      return;
+    }
+    const url = `/uploads/${req.file.filename}`;
+    res.json({ url, filename: req.file.filename });
+  })
+);
+
+router.post(
+  "/avatar",
+  authorize("MEMBER", "STAFF", "ADMIN"),
+  upload.single("image"),
+  asyncHandler(async (req: Request, res: Response) => {
+    if (!req.file) {
+      res.status(400).json({ message: "No file uploaded" });
+      return;
+    }
+    const url = `/uploads/${req.file.filename}`;
+    const userId = (req as any).user.userId;
+    await prisma.member.update({
+      where: { userId },
+      data: { avatarUrl: url },
+    });
+    res.json({ url });
+  })
+);
+
+router.post(
+  "/product-image",
+  authorize("ADMIN", "STAFF"),
   upload.single("image"),
   asyncHandler(async (req: Request, res: Response) => {
     if (!req.file) {
