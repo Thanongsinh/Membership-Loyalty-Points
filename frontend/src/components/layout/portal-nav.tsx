@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Home, Gift, History, UserCircle, LogOut } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
+import { NotificationBell } from "./notification-bell";
 
 const navItems = [
   { href: "/portal", label: "Home", icon: Home },
@@ -20,8 +21,9 @@ export function PortalNav() {
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r bg-card">
-      <div className="flex h-16 items-center border-b px-6">
+      <div className="flex h-16 items-center justify-between border-b px-6">
         <h1 className="text-lg font-bold">Loyalty Points</h1>
+        <NotificationBell />
       </div>
       <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => (

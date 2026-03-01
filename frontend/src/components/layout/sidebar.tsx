@@ -10,6 +10,10 @@ import {
   Coins,
   History,
   LogOut,
+  Flag,
+  Settings,
+  ScrollText,
+  Megaphone,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "next/navigation";
@@ -20,6 +24,10 @@ const navItems = [
   { href: "/dashboard/rewards", label: "Rewards", icon: Gift },
   { href: "/dashboard/points", label: "Points", icon: Coins },
   { href: "/dashboard/transactions", label: "Transactions", icon: History },
+  { href: "/dashboard/campaigns", label: "Campaigns", icon: Megaphone },
+  { href: "/dashboard/feature-flags", label: "Feature Flags", icon: Flag },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/audit-logs", label: "Audit Logs", icon: ScrollText },
 ];
 
 export function Sidebar() {
