@@ -45,7 +45,44 @@ async function main() {
     });
   }
 
-  console.log("Seed completed: feature flags & system settings");
+  // Sample Product Categories
+  const categories = [
+    { name: "Electronics", description: "Electronic devices and accessories" },
+    { name: "Fashion", description: "Clothing and accessories" },
+    { name: "Food & Beverage", description: "Food, drinks, and snacks" },
+    { name: "Health & Beauty", description: "Health and beauty products" },
+  ];
+
+  for (const cat of categories) {
+    await prisma.productCategory.upsert({
+      where: { id: `seed-${cat.name.toLowerCase().replace(/\s+/g, "-")}` },
+      update: {},
+      create: { id: `seed-${cat.name.toLowerCase().replace(/\s+/g, "-")}`, ...cat },
+    });
+  }
+
+  // Sample Stores
+  const stores = [
+    { name: "Main Branch", description: "Flagship store in the city center", address: "123 Main St", phone: "02-123-4567", openingHours: "Mon-Sun 9:00-21:00" },
+    { name: "North Branch", description: "Convenient location in the north", address: "456 North Rd", phone: "02-234-5678", openingHours: "Mon-Sun 10:00-20:00" },
+  ];
+
+  for (const store of stores) {
+    await prisma.store.upsert({
+      where: { id: `seed-${store.name.toLowerCase().replace(/\s+/g, "-")}` },
+      update: {},
+      create: { id: `seed-${store.name.toLowerCase().replace(/\s+/g, "-")}`, ...store },
+    });
+  }
+
+  // Add store feature flag
+  await prisma.featureFlag.upsert({
+    where: { key: "store_system" },
+    update: {},
+    create: { key: "store_system", name: "Store System", description: "Enable store & product system", enabled: true },
+  });
+
+  console.log("Seed completed: feature flags, system settings, categories & stores");
 }
 
 main()
