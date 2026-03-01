@@ -45,6 +45,7 @@ model Member {
   firstName     String
   lastName      String
   phone         String?
+  referralCode  String   @unique @default(uuid())
   tier          Tier     @default(BRONZE)
   totalPoints   Int      @default(0)
   currentPoints Int      @default(0)
@@ -54,6 +55,8 @@ model Member {
   user         User          @relation(fields: [userId], references: [id])
   transactions Transaction[]
   redemptions  Redemption[]
+  referralsMade Referral[]   @relation("Referrer")
+  referralsReceived Referral[] @relation("Referred")
 }
 
 model Reward {
@@ -175,4 +178,28 @@ model Notification {
 
   @@index([userId, isRead])
   @@index([createdAt])
+}
+
+enum ReferralStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+model Referral {
+  id             String         @id @default(uuid())
+  referrerId     String
+  referredId     String
+  status         ReferralStatus @default(PENDING)
+  referrerBonus  Int            @default(0)
+  referredBonus  Int            @default(0)
+  completedAt    DateTime?
+  createdAt      DateTime       @default(now())
+
+  referrer Member @relation("Referrer", fields: [referrerId], references: [id])
+  referred Member @relation("Referred", fields: [referredId], references: [id])
+
+  @@unique([referrerId, referredId])
+  @@index([referrerId])
+  @@index([referredId])
 }

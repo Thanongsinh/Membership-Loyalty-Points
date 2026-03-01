@@ -31,6 +31,8 @@ async function main() {
     { key: "default_points_multiplier", value: "1", type: "number", label: "Default Points Multiplier", group: "points" },
     { key: "app_name", value: "Loyalty Points", type: "string", label: "Application Name", group: "general" },
     { key: "support_email", value: "support@example.com", type: "string", label: "Support Email", group: "general" },
+    { key: "referral_referrer_bonus", value: "200", type: "number", label: "Referrer Bonus Points", description: "Points given to the person who refers", group: "referral" },
+    { key: "referral_referred_bonus", value: "100", type: "number", label: "Referred Bonus Points", description: "Points given to the new member", group: "referral" },
   ];
 
   for (const setting of settings) {

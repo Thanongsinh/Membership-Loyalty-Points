@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Gift, History, UserCircle, LogOut } from "lucide-react";
+import { Home, Gift, History, UserCircle, LogOut, Users } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { NotificationBell } from "./notification-bell";
 
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/portal", label: "Home", icon: Home },
   { href: "/portal/rewards", label: "Rewards", icon: Gift },
   { href: "/portal/history", label: "History", icon: History },
+  { href: "/portal/referrals", label: "Referrals", icon: Users },
   { href: "/portal/profile", label: "Profile", icon: UserCircle },
 ];
 
