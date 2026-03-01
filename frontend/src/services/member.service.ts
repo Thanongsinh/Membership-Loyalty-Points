@@ -1,8 +1,8 @@
 import api from "@/lib/api";
 import { Member, PaginatedResponse } from "@/domain/entities/types";
 
-export async function getMembers(page = 1, limit = 10): Promise<PaginatedResponse<Member>> {
-  const { data } = await api.get("/members", { params: { page, limit } });
+export async function getMembers(page = 1, limit = 10, search?: string, tier?: string): Promise<PaginatedResponse<Member>> {
+  const { data } = await api.get("/members", { params: { page, limit, search, tier } });
   return data;
 }
 

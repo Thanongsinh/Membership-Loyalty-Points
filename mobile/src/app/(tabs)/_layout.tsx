@@ -17,6 +17,10 @@ export default function TabLayout() {
         options={{ title: "History", tabBarIcon: ({ color, size }) => <Ionicons name="time" size={size} color={color} /> }}
       />
       <Tabs.Screen
+        name="gamification"
+        options={{ title: "Check-in", tabBarIcon: ({ color, size }) => <Ionicons name="trophy" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
         name="notifications"
         options={{ title: "Alerts", tabBarIcon: ({ color, size }) => <Ionicons name="notifications" size={size} color={color} /> }}
       />

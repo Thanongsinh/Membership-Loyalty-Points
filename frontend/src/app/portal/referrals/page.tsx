@@ -1,13 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
 import { getMyReferralCode, getMyReferrals, applyReferral, Referral } from "@/services/referral.service";
+import QRCode from "qrcode";
 
 export default function ReferralsPage() {
   const qc = useQueryClient();
@@ -16,6 +16,13 @@ export default function ReferralsPage() {
   const [referralInput, setReferralInput] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
+  const [qrDataUrl, setQrDataUrl] = useState("");
+
+  useEffect(() => {
+    if (code) {
+      QRCode.toDataURL(code, { width: 200, margin: 2 }).then(setQrDataUrl);
+    }
+  }, [code]);
 
   const applyMut = useMutation({
     mutationFn: applyReferral,
@@ -44,11 +51,16 @@ export default function ReferralsPage() {
         <Card>
           <CardHeader><CardTitle>Your Referral Code</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">Share this code with friends to earn bonus points!</p>
+            <p className="text-sm text-muted-foreground">Share this code or QR with friends to earn bonus points!</p>
             <div className="flex gap-2">
               <Input value={code || "Loading..."} readOnly className="font-mono" />
               <Button onClick={copyCode} variant="outline">{copied ? "Copied!" : "Copy"}</Button>
             </div>
+            {qrDataUrl && (
+              <div className="flex justify-center pt-2">
+                <img src={qrDataUrl} alt="Referral QR Code" className="rounded-lg border" />
+              </div>
+            )}
           </CardContent>
         </Card>
 

@@ -10,6 +10,9 @@ import auditLogRoutes from "./audit-log.routes";
 import campaignRoutes from "./campaign.routes";
 import notificationRoutes from "./notification.routes";
 import referralRoutes from "./referral.routes";
+import gamificationRoutes from "./gamification.routes";
+import analyticsRoutes from "./analytics.routes";
+import uploadRoutes from "./upload.routes";
 import { authenticate } from "../middleware/auth.middleware";
 
 export const router = Router();
@@ -29,3 +32,6 @@ router.use("/audit-logs", authenticate, auditLogRoutes);
 router.use("/campaigns", authenticate, campaignRoutes);
 router.use("/notifications", authenticate, notificationRoutes);
 router.use("/referrals", authenticate, referralRoutes);
+router.use("/gamification", authenticate, gamificationRoutes);
+router.use("/analytics", authenticate, analyticsRoutes);
+router.use("/upload", authenticate, uploadRoutes);

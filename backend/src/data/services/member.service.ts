@@ -4,10 +4,10 @@ import { AppError } from "../../core/utilities/errors";
 import { PaginationParams, paginatedResponse } from "../../core/utilities/pagination";
 
 export const memberService = {
-  async getAll(params: PaginationParams) {
+  async getAll(params: PaginationParams, search?: string, tier?: string) {
     const [data, total] = await Promise.all([
-      memberRepository.findAll(params.skip, params.limit),
-      memberRepository.count(),
+      memberRepository.findAll(params.skip, params.limit, search, tier),
+      memberRepository.count(search, tier),
     ]);
     return paginatedResponse(data, total, params);
   },

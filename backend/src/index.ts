@@ -1,10 +1,12 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import { bootstrap } from "./bootstrap/app";
 import { logger } from "./core/logs/logger";
 import { config } from "./core/utilities/config";
+import { startPointsExpiryJob } from "./core/jobs/points-expiry.job";
 
 const app = express();
 
@@ -30,7 +32,13 @@ const authLimiter = rateLimit({
 });
 app.use("/api/auth/", authLimiter);
 
+// Serve uploaded images
+app.use("/uploads", express.static(path.resolve(__dirname, "../uploads")));
+
 bootstrap(app);
+
+// Start cron jobs
+startPointsExpiryJob();
 
 const PORT = config.App.port || 3001;
 

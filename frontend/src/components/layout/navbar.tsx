@@ -3,6 +3,8 @@
 import { useAuthStore } from "@/stores/auth.store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NotificationBell } from "./notification-bell";
+import { ThemeToggle } from "./theme-toggle";
+import { LanguageToggle } from "./language-toggle";
 
 export function Navbar() {
   const user = useAuthStore((s) => s.user);
@@ -11,6 +13,8 @@ export function Navbar() {
     <header className="flex h-16 items-center justify-between border-b bg-card px-6">
       <div />
       <div className="flex items-center gap-3">
+        <LanguageToggle />
+        <ThemeToggle />
         <NotificationBell />
         <span className="text-sm text-muted-foreground">{user?.email}</span>
         <Avatar className="h-8 w-8">

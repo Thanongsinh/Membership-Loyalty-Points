@@ -9,9 +9,10 @@ export const transactionController = {
   getAll: asyncHandler(async (req: Request, res: Response) => {
     const params = parsePagination(req);
     const type = req.query.type as TransactionType | undefined;
+    const search = req.query.search as string | undefined;
     const [data, total] = await Promise.all([
-      transactionRepository.findAll(params.skip, params.limit, type),
-      transactionRepository.countAll(type),
+      transactionRepository.findAll(params.skip, params.limit, type, search),
+      transactionRepository.countAll(type, search),
     ]);
     res.json(paginatedResponse(data, total, params));
   }),

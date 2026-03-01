@@ -6,7 +6,9 @@ import { parsePagination } from "../../core/utilities/pagination";
 export const memberController = {
   getAll: asyncHandler(async (req: Request, res: Response) => {
     const params = parsePagination(req);
-    const result = await memberService.getAll(params);
+    const search = req.query.search as string | undefined;
+    const tier = req.query.tier as string | undefined;
+    const result = await memberService.getAll(params, search, tier);
     res.json(result);
   }),
 

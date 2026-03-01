@@ -1,8 +1,8 @@
 import api from "@/lib/api";
 import { Transaction, PaginatedResponse } from "@/domain/entities/types";
 
-export async function getTransactions(page = 1, limit = 10, type?: string): Promise<PaginatedResponse<Transaction>> {
-  const { data } = await api.get("/transactions", { params: { page, limit, type } });
+export async function getTransactions(page = 1, limit = 10, type?: string, search?: string): Promise<PaginatedResponse<Transaction>> {
+  const { data } = await api.get("/transactions", { params: { page, limit, type, search } });
   return data;
 }
 

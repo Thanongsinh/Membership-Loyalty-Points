@@ -2,17 +2,36 @@ import { Tier } from "@prisma/client";
 import { prisma } from "../prisma";
 
 export const memberRepository = {
-  findAll(skip: number, limit: number) {
+  findAll(skip: number, limit: number, search?: string, tier?: string) {
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { user: { email: { contains: search, mode: "insensitive" } } },
+      ];
+    }
+    if (tier) where.tier = tier;
     return prisma.member.findMany({
       skip,
       take: limit,
+      where,
       include: { user: { select: { email: true, role: true } } },
       orderBy: { createdAt: "desc" },
     });
   },
 
-  count() {
-    return prisma.member.count();
+  count(search?: string, tier?: string) {
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { user: { email: { contains: search, mode: "insensitive" } } },
+      ];
+    }
+    if (tier) where.tier = tier;
+    return prisma.member.count({ where });
   },
 
   findById(id: string) {

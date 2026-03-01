@@ -11,6 +11,7 @@ async function main() {
     { key: "campaigns", name: "Campaigns", description: "Enable campaign system", enabled: true },
     { key: "notifications", name: "Notifications", description: "Enable notification system", enabled: true },
     { key: "maintenance_mode", name: "Maintenance Mode", description: "Put system in maintenance mode", enabled: false },
+    { key: "gamification", name: "Gamification", description: "Enable daily check-in and badges", enabled: true },
   ];
 
   for (const flag of flags) {
@@ -33,6 +34,7 @@ async function main() {
     { key: "support_email", value: "support@example.com", type: "string", label: "Support Email", group: "general" },
     { key: "referral_referrer_bonus", value: "200", type: "number", label: "Referrer Bonus Points", description: "Points given to the person who refers", group: "referral" },
     { key: "referral_referred_bonus", value: "100", type: "number", label: "Referred Bonus Points", description: "Points given to the new member", group: "referral" },
+    { key: "daily_checkin_points", value: "10", type: "number", label: "Daily Check-in Points", description: "Points earned per daily check-in", group: "gamification" },
   ];
 
   for (const setting of settings) {
