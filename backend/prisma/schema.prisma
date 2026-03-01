@@ -59,6 +59,8 @@ model Member {
   referralsReceived Referral[] @relation("Referred")
   cartItems    CartItem[]
   orders       Order[]
+  reviews      ProductReview[]
+  wishlists    Wishlist[]
 }
 
 model Reward {
@@ -113,6 +115,15 @@ enum NotificationType {
   REWARD
   CAMPAIGN
   EXPIRY
+  ORDER
+  STOCK
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED
+  BUY_X_GET_Y
+  BONUS_POINTS
 }
 
 model FeatureFlag {
@@ -210,9 +221,10 @@ model Store {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  staff    StoreStaff[]
-  products Product[]
-  orders   Order[]
+  staff      StoreStaff[]
+  products   Product[]
+  orders     Order[]
+  promotions Promotion[]
 
   @@index([isActive])
 }
@@ -258,10 +270,15 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  averageRating Float   @default(0)
+  reviewCount   Int     @default(0)
+
   store      Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
   category   ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   cartItems  CartItem[]
   orderItems OrderItem[]
+  reviews    ProductReview[]
+  wishlists  Wishlist[]
 
   @@index([storeId])
   @@index([categoryId])
@@ -297,9 +314,15 @@ model Order {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  member     Member      @relation(fields: [memberId], references: [id])
-  store      Store       @relation(fields: [storeId], references: [id])
-  orderItems OrderItem[]
+  promotionId    String?
+  discountAmount Float         @default(0)
+
+  member          Member           @relation(fields: [memberId], references: [id])
+  store           Store            @relation(fields: [storeId], references: [id])
+  promotion       Promotion?       @relation(fields: [promotionId], references: [id])
+  orderItems      OrderItem[]
+  promotionUsage  PromotionUsage?
+  reviews         ProductReview[]
 
   @@index([memberId])
   @@index([storeId])
@@ -345,4 +368,77 @@ model Referral {
   @@unique([referrerId, referredId])
   @@index([referrerId])
   @@index([referredId])
+}
+
+// ===== Store Enhancements =====
+
+model ProductReview {
+  id        String   @id @default(uuid())
+  memberId  String
+  productId String
+  orderId   String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  member  Member  @relation(fields: [memberId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order   Order   @relation(fields: [orderId], references: [id])
+
+  @@unique([memberId, productId, orderId])
+  @@index([productId])
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  memberId  String
+  productId String
+  createdAt DateTime @default(now())
+
+  member  Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, productId])
+  @@index([memberId])
+}
+
+model Promotion {
+  id             String        @id @default(uuid())
+  code           String        @unique
+  name           String
+  description    String?
+  type           PromotionType
+  value          Float
+  minOrderAmount Float?
+  maxUses        Int           @default(0)
+  usedCount      Int           @default(0)
+  storeId        String?
+  startDate      DateTime
+  endDate        DateTime
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  store  Store?           @relation(fields: [storeId], references: [id])
+  orders Order[]
+  usages PromotionUsage[]
+
+  @@index([code])
+  @@index([isActive])
+  @@index([startDate, endDate])
+}
+
+model PromotionUsage {
+  id             String   @id @default(uuid())
+  promotionId    String
+  memberId       String
+  orderId        String   @unique
+  discountAmount Float
+  createdAt      DateTime @default(now())
+
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id])
+
+  @@index([promotionId])
+  @@index([memberId])
 }

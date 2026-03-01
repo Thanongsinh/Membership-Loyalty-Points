@@ -161,6 +161,72 @@ const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "Checkout with Points",
     "cart.orderSuccess": "Order placed successfully!",
     "cart.viewOrders": "View My Orders",
+
+    // Promotions
+    "nav.promotions": "Promotions",
+    "promo.title": "Promotions",
+    "promo.add": "Add Promotion",
+    "promo.edit": "Edit Promotion",
+    "promo.code": "Promo Code",
+    "promo.name": "Name",
+    "promo.type": "Type",
+    "promo.value": "Value",
+    "promo.minOrder": "Min Order",
+    "promo.maxUses": "Max Uses",
+    "promo.usage": "Usage",
+    "promo.period": "Period",
+    "promo.startDate": "Start Date",
+    "promo.endDate": "End Date",
+    "promo.enterCode": "Enter promo code",
+    "promo.apply": "Apply",
+    "promo.store": "Store",
+    "promo.allStores": "All Stores",
+    "promo.active": "Active",
+    "promo.expired": "Expired",
+
+    // Wishlist
+    "nav.wishlist": "Wishlist",
+    "wishlist.title": "My Wishlist",
+    "wishlist.empty": "Your wishlist is empty.",
+
+    // Reviews
+    "review.write": "Write a Review",
+    "review.rating": "Rating",
+    "review.comment": "Comment",
+    "review.submit": "Submit Review",
+    "review.reviews": "Reviews",
+    "review.noReviews": "No reviews yet.",
+    "review.stars": "stars",
+
+    // Receipt
+    "receipt.title": "Receipt",
+    "receipt.print": "Print",
+    "receipt.subtotal": "Subtotal",
+    "receipt.discount": "Discount",
+    "receipt.pointsUsed": "Points Used",
+    "receipt.thanks": "Thank you for your purchase!",
+    "receipt.receipt": "Receipt",
+
+    // Staff
+    "staff.title": "Staff Dashboard",
+    "staff.dashboard": "Dashboard",
+    "staff.orders": "Orders",
+    "staff.pendingOrders": "Pending Orders",
+    "staff.todayOrders": "Today's Orders",
+    "staff.todayRevenue": "Today's Revenue",
+    "staff.updateStatus": "Update Status",
+    "staff.earnPoints": "Earn Points",
+    "staff.memberId": "Member ID",
+    "staff.amount": "Amount",
+    "staff.description": "Description",
+
+    // Analytics
+    "analytics.storeAnalytics": "Store Analytics",
+    "analytics.revenue": "Revenue",
+    "analytics.topProducts": "Top Products",
+    "analytics.dailySales": "Daily Sales",
+    "analytics.completedOrders": "Completed Orders",
+    "analytics.export": "Export CSV",
   },
   la: {
     // Common
@@ -318,6 +384,72 @@ const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "ຊຳລະດ້ວຍຄະແນນ",
     "cart.orderSuccess": "ສັ່ງອໍເດີສຳເລັດ!",
     "cart.viewOrders": "ເບິ່ງອໍເດີ",
+
+    // Promotions
+    "nav.promotions": "ໂປຣໂມຊັນ",
+    "promo.title": "ໂປຣໂມຊັນ",
+    "promo.add": "ເພີ່ມໂປຣໂມຊັນ",
+    "promo.edit": "ແກ້ໄຂໂປຣໂມຊັນ",
+    "promo.code": "ລະຫັດໂປຣໂມ",
+    "promo.name": "ຊື່",
+    "promo.type": "ປະເພດ",
+    "promo.value": "ມູນຄ່າ",
+    "promo.minOrder": "ອໍເດີຂັ້ນຕ່ຳ",
+    "promo.maxUses": "ໃຊ້ໄດ້ສູງສຸດ",
+    "promo.usage": "ການໃຊ້ງານ",
+    "promo.period": "ໄລຍະເວລາ",
+    "promo.startDate": "ວັນເລີ່ມ",
+    "promo.endDate": "ວັນສິ້ນສຸດ",
+    "promo.enterCode": "ປ້ອນລະຫັດໂປຣໂມ",
+    "promo.apply": "ນຳໃຊ້",
+    "promo.store": "ຮ້ານ",
+    "promo.allStores": "ທຸກຮ້ານ",
+    "promo.active": "ເປີດໃຊ້",
+    "promo.expired": "ໝົດອາຍຸ",
+
+    // Wishlist
+    "nav.wishlist": "ລາຍການທີ່ມັກ",
+    "wishlist.title": "ລາຍການທີ່ມັກ",
+    "wishlist.empty": "ລາຍການທີ່ມັກຫວ່າງຢູ່.",
+
+    // Reviews
+    "review.write": "ຂຽນລີວິວ",
+    "review.rating": "ຄະແນນ",
+    "review.comment": "ຄຳເຫັນ",
+    "review.submit": "ສົ່ງລີວິວ",
+    "review.reviews": "ລີວິວ",
+    "review.noReviews": "ຍັງບໍ່ມີລີວິວ.",
+    "review.stars": "ດາວ",
+
+    // Receipt
+    "receipt.title": "ໃບຮັບເງິນ",
+    "receipt.print": "ພິມ",
+    "receipt.subtotal": "ລວມຍ່ອຍ",
+    "receipt.discount": "ສ່ວນຫຼຸດ",
+    "receipt.pointsUsed": "ຄະແນນທີ່ໃຊ້",
+    "receipt.thanks": "ຂອບໃຈທີ່ໃຊ້ບໍລິການ!",
+    "receipt.receipt": "ໃບຮັບເງິນ",
+
+    // Staff
+    "staff.title": "ແຜງພະນັກງານ",
+    "staff.dashboard": "ແຜງຄວບຄຸມ",
+    "staff.orders": "ອໍເດີ",
+    "staff.pendingOrders": "ອໍເດີລໍຖ້າ",
+    "staff.todayOrders": "ອໍເດີມື້ນີ້",
+    "staff.todayRevenue": "ລາຍຮັບມື້ນີ້",
+    "staff.updateStatus": "ອັບເດດສະຖານະ",
+    "staff.earnPoints": "ເພີ່ມຄະແນນ",
+    "staff.memberId": "ລະຫັດສະມາຊິກ",
+    "staff.amount": "ຈຳນວນ",
+    "staff.description": "ລາຍລະອຽດ",
+
+    // Analytics
+    "analytics.storeAnalytics": "ວິເຄາະຮ້ານ",
+    "analytics.revenue": "ລາຍຮັບ",
+    "analytics.topProducts": "ສິນຄ້າຂາຍດີ",
+    "analytics.dailySales": "ຍອດຂາຍປະຈຳວັນ",
+    "analytics.completedOrders": "ອໍເດີສຳເລັດ",
+    "analytics.export": "ສົ່ງອອກ CSV",
   },
 };
 

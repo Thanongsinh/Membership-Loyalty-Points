@@ -5,6 +5,7 @@ import { authorize } from "../middleware/auth.middleware";
 const router = Router();
 
 router.get("/dashboard", authorize("ADMIN", "STAFF"), analyticsController.getDashboard);
+router.get("/store/:storeId", authorize("ADMIN", "STAFF"), analyticsController.getStoreAnalytics);
 router.get("/export/csv", authorize("ADMIN", "STAFF"), analyticsController.exportCsv);
 
 export default router;

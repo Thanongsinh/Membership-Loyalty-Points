@@ -3,6 +3,7 @@ import { AppError } from "../../core/utilities/errors";
 import { PaginationParams, paginatedResponse } from "../../core/utilities/pagination";
 import { memberService } from "./member.service";
 import { notificationService } from "./notification.service";
+import { sseService } from "./sse.service";
 
 export const orderService = {
   async checkoutWithPoints(memberId: string) {
@@ -145,10 +146,23 @@ export const orderService = {
   },
 
   async updateStatus(orderId: string, status: string) {
-    return prisma.order.update({
+    const order = await prisma.order.update({
       where: { id: orderId },
       data: { status: status as any },
+      include: { member: true },
     });
+    if (order.member) {
+      sseService.broadcastOrderUpdate(order.member.userId, {
+        id: order.id, orderNumber: order.orderNumber, status: order.status,
+      });
+      await notificationService.create({
+        userId: order.member.userId,
+        type: "ORDER" as any,
+        title: "Order Updated",
+        message: `Order #${order.orderNumber.slice(0, 8)} is now ${status}.`,
+      });
+    }
+    return order;
   },
 
   async getById(id: string) {

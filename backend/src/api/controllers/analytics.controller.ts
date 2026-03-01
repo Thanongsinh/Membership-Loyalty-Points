@@ -47,6 +47,44 @@ export const analyticsController = {
     });
   }),
 
+  getStoreAnalytics: asyncHandler(async (req: Request<{ storeId: string }>, res: Response) => {
+    const storeId = req.params.storeId;
+    const from = req.query.from ? new Date(req.query.from as string) : undefined;
+    const to = req.query.to ? new Date(req.query.to as string) : undefined;
+    const dateFilter: any = { storeId };
+    if (from && to) { dateFilter.createdAt = { gte: from, lte: to }; }
+
+    const [totalOrders, completedOrders, revenue, orders, topProducts] = await Promise.all([
+      prisma.order.count({ where: dateFilter }),
+      prisma.order.count({ where: { ...dateFilter, status: "COMPLETED" } }),
+      prisma.order.aggregate({ where: { ...dateFilter, status: "COMPLETED" }, _sum: { totalAmount: true } }),
+      prisma.order.findMany({ where: dateFilter, select: { totalAmount: true, createdAt: true, status: true }, orderBy: { createdAt: "asc" } }),
+      prisma.orderItem.groupBy({
+        by: ["productName"],
+        where: { order: dateFilter },
+        _sum: { quantity: true, totalPrice: true },
+        orderBy: { _sum: { totalPrice: "desc" } },
+        take: 10,
+      }),
+    ]);
+
+    const daily: Record<string, { revenue: number; orders: number }> = {};
+    for (const o of orders) {
+      const day = o.createdAt.toISOString().split("T")[0];
+      if (!daily[day]) daily[day] = { revenue: 0, orders: 0 };
+      daily[day].orders++;
+      if (o.status === "COMPLETED") daily[day].revenue += o.totalAmount;
+    }
+
+    res.json({
+      totalOrders,
+      completedOrders,
+      totalRevenue: revenue._sum.totalAmount || 0,
+      topProducts: topProducts.map((p) => ({ name: p.productName, quantity: p._sum.quantity, revenue: p._sum.totalPrice })),
+      dailyChart: Object.entries(daily).map(([date, v]) => ({ date, ...v })),
+    });
+  }),
+
   exportCsv: asyncHandler(async (req: Request, res: Response) => {
     const type = (req.query.type as string) || "transactions";
     const from = req.query.from ? new Date(req.query.from as string) : undefined;

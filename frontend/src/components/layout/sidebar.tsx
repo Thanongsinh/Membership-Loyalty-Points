@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard, Users, Gift, Coins, History, LogOut, Flag, Settings, ScrollText, Megaphone, Store, Tags, ShoppingBag,
+  LayoutDashboard, Users, Gift, Coins, History, LogOut, Flag, Settings, ScrollText, Megaphone, Store, Tags, ShoppingBag, Ticket,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "next/navigation";
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/dashboard/stores", labelKey: "nav.stores", icon: Store },
   { href: "/dashboard/product-categories", labelKey: "nav.categories", icon: Tags },
   { href: "/dashboard/orders", labelKey: "nav.orders", icon: ShoppingBag },
+  { href: "/dashboard/promotions", labelKey: "nav.promotions", icon: Ticket },
   { href: "/dashboard/campaigns", labelKey: "nav.campaigns", icon: Megaphone },
   { href: "/dashboard/feature-flags", labelKey: "nav.featureFlags", icon: Flag },
   { href: "/dashboard/settings", labelKey: "nav.settings", icon: Settings },

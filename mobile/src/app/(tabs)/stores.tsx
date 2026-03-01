@@ -1,8 +1,9 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { getStores, getProducts } from "../../services/store.service";
 import { addToCart } from "../../services/cart.service";
+import { getMyWishlist, toggleWishlist } from "../../services/wishlist.service";
 import { Store, Product } from "../../domain/entities/types";
 
 export default function StoresScreen() {
@@ -20,11 +21,29 @@ export default function StoresScreen() {
     enabled: !!selectedStore,
   });
 
+  const { data: wishlistData } = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: getMyWishlist,
+  });
+
+  const wishlistProductIds = useMemo(
+    () => new Set(wishlistData?.map((item) => item.productId) || []),
+    [wishlistData]
+  );
+
   const addMut = useMutation({
     mutationFn: (productId: string) => addToCart(productId),
     onSuccess: () => {
       Alert.alert("Added", "Item added to cart!");
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (e: any) => Alert.alert("Error", e.response?.data?.message || "Failed"),
+  });
+
+  const wishlistMut = useMutation({
+    mutationFn: (productId: string) => toggleWishlist(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
     },
     onError: (e: any) => Alert.alert("Error", e.response?.data?.message || "Failed"),
   });
@@ -40,24 +59,42 @@ export default function StoresScreen() {
         <FlatList
           data={productsData?.data || []}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }: { item: Product }) => (
-            <View style={styles.card}>
-              <Text style={styles.productName}>{item.name}</Text>
-              {item.description && <Text style={styles.desc}>{item.description}</Text>}
-              <View style={styles.row}>
-                <Text style={styles.price}>{item.price.toLocaleString()} THB</Text>
-                {item.pointsPrice && <Text style={styles.points}>{item.pointsPrice.toLocaleString()} pts</Text>}
+          renderItem={({ item }: { item: Product }) => {
+            const isWishlisted = wishlistProductIds.has(item.id);
+            return (
+              <View style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.productName}>{item.name}</Text>
+                  <TouchableOpacity
+                    onPress={() => wishlistMut.mutate(item.id)}
+                    disabled={wishlistMut.isPending}
+                    style={styles.heartBtn}
+                  >
+                    <Text style={styles.heartIcon}>{isWishlisted ? "❤️" : "🤍"}</Text>
+                  </TouchableOpacity>
+                </View>
+                {item.description && <Text style={styles.desc}>{item.description}</Text>}
+                {(item.averageRating !== undefined && item.reviewCount !== undefined && item.reviewCount > 0) && (
+                  <View style={styles.ratingRow}>
+                    <Text style={styles.stars}>⭐ {item.averageRating.toFixed(1)}</Text>
+                    <Text style={styles.reviewCount}>({item.reviewCount} reviews)</Text>
+                  </View>
+                )}
+                <View style={styles.row}>
+                  <Text style={styles.price}>{item.price.toLocaleString()} THB</Text>
+                  {item.pointsPrice && <Text style={styles.points}>{item.pointsPrice.toLocaleString()} pts</Text>}
+                </View>
+                <Text style={styles.stock}>Stock: {item.stock}</Text>
+                <TouchableOpacity
+                  style={[styles.addBtn, item.stock <= 0 && styles.disabledBtn]}
+                  disabled={item.stock <= 0 || addMut.isPending}
+                  onPress={() => addMut.mutate(item.id)}
+                >
+                  <Text style={styles.addText}>Add to Cart</Text>
+                </TouchableOpacity>
               </View>
-              <Text style={styles.stock}>Stock: {item.stock}</Text>
-              <TouchableOpacity
-                style={[styles.addBtn, item.stock <= 0 && styles.disabledBtn]}
-                disabled={item.stock <= 0 || addMut.isPending}
-                onPress={() => addMut.mutate(item.id)}
-              >
-                <Text style={styles.addText}>Add to Cart</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+            );
+          }}
           contentContainerStyle={{ paddingBottom: 20 }}
         />
       </View>
@@ -93,9 +130,15 @@ const styles = StyleSheet.create({
   backBtn: { marginBottom: 8 },
   backText: { fontSize: 14, color: "#3b82f6" },
   card: { backgroundColor: "#fff", borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 },
   storeName: { fontSize: 18, fontWeight: "bold", marginBottom: 4 },
-  productName: { fontSize: 16, fontWeight: "bold", marginBottom: 4 },
+  productName: { fontSize: 16, fontWeight: "bold", flex: 1 },
+  heartBtn: { padding: 4, marginLeft: 8 },
+  heartIcon: { fontSize: 20 },
   desc: { fontSize: 14, color: "#64748b", marginBottom: 4 },
+  ratingRow: { flexDirection: "row", alignItems: "center", marginTop: 4, marginBottom: 4 },
+  stars: { fontSize: 14, fontWeight: "600", color: "#f59e0b" },
+  reviewCount: { fontSize: 12, color: "#94a3b8", marginLeft: 4 },
   address: { fontSize: 13, color: "#94a3b8", marginBottom: 4 },
   count: { fontSize: 13, color: "#0f172a", fontWeight: "500" },
   row: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },

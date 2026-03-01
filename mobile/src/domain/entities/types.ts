@@ -69,6 +69,8 @@ export interface Product {
   stock: number;
   imageUrl: string | null;
   isActive: boolean;
+  averageRating?: number;
+  reviewCount?: number;
   category?: { name: string };
 }
 
@@ -94,4 +96,11 @@ export interface Order {
 export interface PaginatedResponse<T> {
   data: T[];
   meta: { page: number; limit: number; total: number; totalPages: number };
+}
+
+export interface WishlistItem {
+  id: string;
+  productId: string;
+  createdAt: string;
+  product?: Product & { store?: { name: string } };
 }

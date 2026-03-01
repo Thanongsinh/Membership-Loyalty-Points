@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Gift, History, UserCircle, LogOut, Users, Trophy, Store, ShoppingCart, ShoppingBag } from "lucide-react";
+import { Home, Gift, History, UserCircle, LogOut, Users, Trophy, Store, ShoppingCart, ShoppingBag, Heart } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { NotificationBell } from "./notification-bell";
 import { useI18n } from "@/lib/i18n";
@@ -16,6 +16,7 @@ const navItems = [
   { href: "/portal/stores", labelKey: "nav.stores", icon: Store },
   { href: "/portal/cart", labelKey: "nav.cart", icon: ShoppingCart },
   { href: "/portal/orders", labelKey: "nav.orders", icon: ShoppingBag },
+  { href: "/portal/wishlist", labelKey: "nav.wishlist", icon: Heart },
   { href: "/portal/gamification", labelKey: "nav.checkin", icon: Trophy },
   { href: "/portal/profile", labelKey: "nav.profile", icon: UserCircle },
 ];

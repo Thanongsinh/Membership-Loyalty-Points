@@ -82,7 +82,36 @@ async function main() {
     create: { key: "store_system", name: "Store System", description: "Enable store & product system", enabled: true },
   });
 
-  console.log("Seed completed: feature flags, system settings, categories & stores");
+  // Low stock threshold setting
+  await prisma.systemSetting.upsert({
+    where: { key: "low_stock_threshold" },
+    update: {},
+    create: { key: "low_stock_threshold", value: "5", type: "number", label: "Low Stock Alert Threshold", description: "Alert when product stock falls below this", group: "store" },
+  });
+
+  // Sample Promotions
+  const promos = [
+    { code: "WELCOME10", name: "Welcome 10%", type: "PERCENTAGE" as const, value: 10, maxUses: 100, startDate: new Date(), endDate: new Date(Date.now() + 365 * 86400000) },
+    { code: "FLAT50", name: "Flat 50 Off", type: "FIXED" as const, value: 50, minOrderAmount: 200, maxUses: 50, startDate: new Date(), endDate: new Date(Date.now() + 180 * 86400000) },
+    { code: "BONUS100", name: "100 Bonus Points", type: "BONUS_POINTS" as const, value: 100, maxUses: 0, startDate: new Date(), endDate: new Date(Date.now() + 90 * 86400000) },
+  ];
+
+  for (const promo of promos) {
+    await prisma.promotion.upsert({
+      where: { code: promo.code },
+      update: {},
+      create: promo,
+    });
+  }
+
+  // Promotion feature flag
+  await prisma.featureFlag.upsert({
+    where: { key: "promotions" },
+    update: {},
+    create: { key: "promotions", name: "Promotions", description: "Enable promotion/coupon system", enabled: true },
+  });
+
+  console.log("Seed completed: feature flags, system settings, categories, stores & promotions");
 }
 
 main()
